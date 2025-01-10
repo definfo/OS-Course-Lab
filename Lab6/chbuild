@@ -139,7 +139,7 @@ config() {
     _check_config_file
     _config_ask
     _sync_config_with_cache
-    _echo_succ "Config syned to \`$config_file\` file."
+    _echo_succ "Config synced to \`$config_file\` file."
 }
 
 menuconfig() {
@@ -167,7 +167,7 @@ build() {
     _check_config_file
     _config_ask
     _sync_config_with_cache
-    _echo_succ "Config syned to \`$config_file\` file."
+    _echo_succ "Config synced to \`$config_file\` file."
 
     if [ -z "$1" ]; then
         build_target="all"
@@ -265,7 +265,7 @@ _update_submodules() {
 }
 
 _docker_run() {
-    if [ -f /.dockerenv ]; then
+    if [[ -f /.dockerenv || -f /run/.containerenv ]]; then
         # we are already in docker container
         $@
     else
