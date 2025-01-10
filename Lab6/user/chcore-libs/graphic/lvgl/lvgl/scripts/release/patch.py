@@ -27,7 +27,7 @@ def clone(repo):
 os.chdir("lvgl")
 
 cmd = "git branch --remotes | grep origin/release/v8"
-branches, error = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+branches, error = subprocess.Popen(cmd, shell=True, executable="/usr/bin/env bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 
 branches = str(branches)
 branches = branches.replace("b'", "")
