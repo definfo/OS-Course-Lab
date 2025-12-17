@@ -86,17 +86,37 @@ void init_kernel_pt(void)
 
         /* TTBR1_EL1 0-1G */
         /* LAB 1 TODO 5 BEGIN */
+        /* High address, Kernel memory */
+        vaddr = KERNEL_VADDR + PHYSMEM_START;
+
         /* Step 1: set L0 and L1 page table entry */
-        /* BLANK BEGIN */
-        /* BLANK END */
+        boot_ttbr1_l0[GET_L0_INDEX(vaddr)] = ((u64)boot_ttbr1_l1) | IS_TABLE
+                                             | IS_VALID;
+        boot_ttbr1_l1[GET_L1_INDEX(vaddr)] = ((u64)boot_ttbr1_l2) | IS_TABLE
+                                             | IS_VALID;
 
         /* Step 2: map PHYSMEM_START ~ PERIPHERAL_BASE with 2MB granularity */
-        /* BLANK BEGIN */
-        /* BLANK END */
+        /* SDRAM */
+        for (; vaddr < KERNEL_VADDR + PERIPHERAL_BASE; vaddr += SIZE_2M) {
+                boot_ttbr1_l2[GET_L2_INDEX(vaddr)] =
+                        (vaddr - KERNEL_VADDR) /* high mem, va - k_va = pa */
+                        | UXN /* Unprivileged execute never */
+                        | ACCESSED /* Set access flag */
+                        | INNER_SHARABLE /* Shareability */
+                        | NORMAL_MEMORY /* Normal memory */
+                        | IS_VALID;
+        }
 
         /* Step 2: map PERIPHERAL_BASE ~ PHYSMEM_END with 2MB granularity */
-        /* BLANK BEGIN */
-        /* BLANK END */
+        /* Shared peripherals, no INNER_SHARABLE for device memory */
+        for (vaddr = KERNEL_VADDR + PERIPHERAL_BASE; vaddr < KERNEL_VADDR + PHYSMEM_END; vaddr += SIZE_2M) {
+                boot_ttbr1_l2[GET_L2_INDEX(vaddr)] =
+                        (vaddr - KERNEL_VADDR) /* high mem, va - k_va = pa */
+                        | UXN /* Unprivileged execute never */
+                        | ACCESSED /* Set access flag */
+                        | DEVICE_MEMORY /* Device memory */
+                        | IS_VALID;
+        }
         /* LAB 1 TODO 5 END */
 
         /*
@@ -110,7 +130,7 @@ void init_kernel_pt(void)
                                                                   execute never
                                                                 */
                                              | ACCESSED /* Set access flag */
-                                             | NG /* Mark as not global */
+                                             // | NG /* Mark as not global */
                                              | DEVICE_MEMORY /* Device memory */
                                              | IS_VALID;
 }

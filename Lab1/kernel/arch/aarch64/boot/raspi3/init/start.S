@@ -29,7 +29,7 @@ BEGIN_FUNC(_start)
 wait_for_bss_clear:
 	adr	x0, clear_bss_flag
 	ldr	x1, [x0]
-	cmp     x1, #0
+	cmp x1, #0
 	bne	wait_for_bss_clear
 
 	/* Set cntkctl_el1 to enable cntvct_el0.
@@ -44,7 +44,7 @@ wait_for_bss_clear:
 	/* Prepare stack pointer and jump to C. */
 	mov	x1, #INIT_STACK_SIZE
 	mul	x1, x8, x1
-	adr 	x0, boot_cpu_stack
+	adr x0, boot_cpu_stack
 	add	x0, x0, x1
 	add	x0, x0, #INIT_STACK_SIZE
 	mov	sp, x0
@@ -71,9 +71,9 @@ primary:
 	bl 	arm64_elX_to_el1
 
 	/* Prepare stack pointer and jump to C. */
-	adr 	x0, boot_cpu_stack
-	add 	x0, x0, #INIT_STACK_SIZE
-	mov 	sp, x0
+	adr x0, boot_cpu_stack
+	add x0, x0, #INIT_STACK_SIZE
+	mov sp, x0
 
 	b 	init_c
 
